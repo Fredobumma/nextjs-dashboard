@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import Image from 'next/image'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faArrowDown,
@@ -35,14 +36,37 @@ import {
   faLinkedinIn,
   faTwitter,
 } from '@fortawesome/free-brands-svg-icons'
-import React from 'react'
 import { AdminLayout } from '@layout'
+import { http } from '@lib'
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Filler)
 
 const random = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) + min)
 
-const Home: NextPage = () => (
+interface Token {
+  price: string;
+  name: string;
+  change: string;
+}
+
+const Home: NextPage = () => {
+
+  const [tokens, setTokens] = useState<Token[]>([])
+
+  useEffect(()=> {
+    try {
+      const getData = async () => {
+        const { data: { data } } = await http.request()
+        setTokens([...data.coins])
+      }
+      getData()
+    } catch (error) {
+      // eslint-disable-next-line
+      console.error(error)
+    }
+  }, [])
+
+  return  (
   <AdminLayout>
     <div className="row">
       <div className="col-sm-6 col-lg-3">
@@ -50,14 +74,14 @@ const Home: NextPage = () => (
           <Card.Body className="pb-0 d-flex justify-content-between align-items-start">
             <div>
               <div className="fs-4 fw-semibold">
-                26K
+              ${Math.round(((Number(tokens[0]?.price) || 0) * 100) / 100)}
                 <span className="fs-6 ms-2 fw-normal">
-                  (-12.4%
+                  ({tokens[0]?.change}%
                   <FontAwesomeIcon icon={faArrowDown} fixedWidth />
                   )
                 </span>
               </div>
-              <div>Users</div>
+              <div>{tokens[0]?.name}</div>
             </div>
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -138,14 +162,14 @@ const Home: NextPage = () => (
           <Card.Body className="pb-0 d-flex justify-content-between align-items-start">
             <div>
               <div className="fs-4 fw-semibold">
-                $6.200
+              ${Math.round(((Number(tokens[1]?.price) || 0) * 100) / 100)}
                 <span className="fs-6 ms-2 fw-normal">
-                  (40.9%
+                ({tokens[1]?.change}%
                   <FontAwesomeIcon icon={faArrowUp} fixedWidth />
                   )
                 </span>
               </div>
-              <div>Income</div>
+              <div>{tokens[1]?.name}</div>
             </div>
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -225,14 +249,14 @@ const Home: NextPage = () => (
           <Card.Body className="pb-0 d-flex justify-content-between align-items-start">
             <div>
               <div className="fs-4 fw-semibold">
-                2.49%
+              ${Math.round(((Number(tokens[2]?.price) || 0) * 100) / 100)}
                 <span className="fs-6 ms-2 fw-normal">
-                  (84.7%
+                ({tokens[2]?.change}%
                   <FontAwesomeIcon icon={faArrowUp} fixedWidth />
                   )
                 </span>
               </div>
-              <div>Conversion Rate</div>
+              <div>{tokens[2]?.name}</div>
             </div>
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -300,14 +324,14 @@ const Home: NextPage = () => (
           <Card.Body className="pb-0 d-flex justify-content-between align-items-start">
             <div>
               <div className="fs-4 fw-semibold">
-                44K
+              ${Math.round(((Number(tokens[3]?.price) || 0) * 100) / 100)}
                 <span className="fs-6 ms-2 fw-normal">
-                  (-23.6%
+                ({tokens[3]?.change}%
                   <FontAwesomeIcon icon={faArrowDown} fixedWidth />
                   )
                 </span>
               </div>
-              <div>Sessions</div>
+              <div>{tokens[3]?.name}</div>
             </div>
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -1359,7 +1383,7 @@ const Home: NextPage = () => (
         </Card>
       </div>
     </div>
-  </AdminLayout>
-)
+  </AdminLayout>)
+}
 
 export default Home
